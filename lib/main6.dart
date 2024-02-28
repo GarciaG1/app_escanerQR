@@ -9,8 +9,27 @@ class ScanQRCodep extends StatefulWidget {
   _ScanQRCodeStatep createState() => _ScanQRCodeStatep();
 }
 
-class _ScanQRCodeStatep extends State<ScanQRCodep> {
+class _ScanQRCodeStatep extends State<ScanQRCodep>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
   String qrResult = 'Para abrir el escaner clic en "Iniciar Escaner"';
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController =
+        AnimationController(duration: Duration(seconds: 1), vsync: this)
+          ..repeat(reverse: true);
+    _animation = Tween<double>(begin: 0, end: 1).animate(_animationController);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   Future<void> scanQR() async {
     try {
@@ -47,6 +66,25 @@ class _ScanQRCodeStatep extends State<ScanQRCodep> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(height: 30),
+            Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                color: Colors.blue.withOpacity(0.3),
+                border: Border.all(color: Colors.blue, width: 2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: FadeTransition(
+                opacity: _animation,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
             SizedBox(height: 30),
             Text('$qrResult', style: TextStyle(color: Colors.black)),
             SizedBox(height: 30),
